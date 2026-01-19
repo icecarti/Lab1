@@ -30,15 +30,10 @@ class FeedViewModel(application: Application) : AndroidViewModel(application) {
     val error: LiveData<String?> = _error
 
     init {
-        Log.d(TAG, "init: FeedViewModel создан")
-
+        Log.d(TAG, "init: FeedViewModel created")
         val db = AppDatabase.getInstance(application)
-        repository = MessageRepository(
-            api = NetworkModule.api,
-            dao = db.messageDao()
-        )
-
-        refresh(forceRefresh = false)
+        repository = MessageRepository(NetworkModule.api, db.messageDao())
+        refresh(false)
     }
 
     fun refresh(forceRefresh: Boolean) {
@@ -46,8 +41,8 @@ class FeedViewModel(application: Application) : AndroidViewModel(application) {
             _isLoading.value = true
             _error.value = null
             try {
-                val result = repository.loadMessages(forceRefresh)
-                _messages.value = result
+                val list = repository.loadMessages(forceRefresh)
+                _messages.value = list
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to load messages", e)
                 _error.value = e.message ?: "Ошибка загрузки"
@@ -57,8 +52,18 @@ class FeedViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun onLikeClicked(message: Message) {
+        viewModelScope.launch {
+            repository.toggleLike(message)
+            val current = _messages.value ?: return@launch
+            _messages.value = current.map {
+                if (it.id == message.id) it.copy(isLiked = !message.isLiked) else it
+            }
+        }
+    }
+
     override fun onCleared() {
-        Log.d(TAG, "onCleared: FeedViewModel очищен")
+        Log.d(TAG, "onCleared: FeedViewModel destroyed")
         super.onCleared()
     }
 }

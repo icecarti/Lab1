@@ -15,7 +15,9 @@ class FeedFragment : LoggingFragment("FeedFragment") {
     private val binding get() = _binding!!
 
     private val viewModel: FeedViewModel by viewModels()
-    private val adapter = MessageAdapter()
+    private val adapter = MessageAdapter { message ->
+        viewModel.onLikeClicked(message)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,7 +34,7 @@ class FeedFragment : LoggingFragment("FeedFragment") {
         binding.rvMessages.layoutManager = LinearLayoutManager(requireContext())
         binding.rvMessages.adapter = adapter
 
-        binding.btnRefresh.setOnClickListener {
+        binding.fabRefresh.setOnClickListener {
             viewModel.refresh(forceRefresh = true)
         }
 
@@ -49,8 +51,8 @@ class FeedFragment : LoggingFragment("FeedFragment") {
             }
         }
 
-        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        viewModel.isLoading.observe(viewLifecycleOwner) { loading ->
+            binding.progressBar.visibility = if (loading) View.VISIBLE else View.GONE
         }
     }
 

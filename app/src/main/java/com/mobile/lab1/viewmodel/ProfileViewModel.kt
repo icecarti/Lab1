@@ -12,27 +12,25 @@ class ProfileViewModel : ViewModel() {
     }
 
     private val _userName = MutableLiveData("Андрей")
-    val userName: LiveData<String> get() = _userName
+    val userName: LiveData<String> = _userName
 
     private val _userStatus = MutableLiveData("Онлайн")
-    val userStatus: LiveData<String> get() = _userStatus
+    val userStatus: LiveData<String> = _userStatus
 
     init {
-        Log.d(TAG, "init: ProfileViewModel создан")
+        Log.d(TAG, "init: ProfileViewModel created")
     }
 
     fun updateName(newName: String) {
-        Log.d(TAG, "updateName: $newName")
         _userName.value = newName
     }
 
     fun updateStatus(newStatus: String) {
-        Log.d(TAG, "updateStatus: $newStatus")
         _userStatus.value = newStatus
     }
 
     override fun onCleared() {
-        Log.d(TAG, "onCleared: ProfileViewModel уничтожен")
+        Log.d(TAG, "onCleared: ProfileViewModel destroyed")
         super.onCleared()
     }
 }

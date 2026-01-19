@@ -25,8 +25,14 @@ class MessageRepository(
     }
 
     private suspend fun tryNetworkThenDb(): List<Message> {
+        val fromDb = dao.getAllMessages()
+        val likedMap = fromDb.associateBy({ it.id }, { it.isLiked })
+
         val dtos = api.getMessages()
-        val entities = dtos.map { it.toEntity() }
+        val entities = dtos.map { dto ->
+            val oldLiked = likedMap[dto.id] ?: false
+            dto.toEntity(oldLiked)
+        }
 
         dao.clearMessages()
         dao.insertMessages(entities)
@@ -34,8 +40,10 @@ class MessageRepository(
         return entities.map { it.toDomain() }
     }
 
-    private suspend fun loadFromDb(): List<Message> {
-        val entities = dao.getAllMessages()
-        return entities.map { it.toDomain() }
+    private suspend fun loadFromDb(): List<Message> =
+        dao.getAllMessages().map { it.toDomain() }
+
+    suspend fun toggleLike(message: Message) {
+        dao.updateLike(message.id, !message.isLiked)
     }
 }

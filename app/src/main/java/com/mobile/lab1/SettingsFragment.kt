@@ -29,14 +29,14 @@ class SettingsFragment : LoggingFragment("SettingsFragment") {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val switchListener = { _: CompoundButton, isChecked: Boolean ->
+        val listener = { _: CompoundButton, isChecked: Boolean ->
             viewModel.setDarkTheme(isChecked)
         }
 
         viewModel.isDarkTheme.observe(viewLifecycleOwner) { isDark ->
             binding.switchTheme.setOnCheckedChangeListener(null)
             binding.switchTheme.isChecked = isDark
-            binding.switchTheme.setOnCheckedChangeListener(switchListener)
+            binding.switchTheme.setOnCheckedChangeListener(listener)
 
             AppCompatDelegate.setDefaultNightMode(
                 if (isDark) AppCompatDelegate.MODE_NIGHT_YES
@@ -44,7 +44,7 @@ class SettingsFragment : LoggingFragment("SettingsFragment") {
             )
         }
 
-        binding.switchTheme.setOnCheckedChangeListener(switchListener)
+        binding.switchTheme.setOnCheckedChangeListener(listener)
     }
 
     override fun onDestroyView() {

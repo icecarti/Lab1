@@ -12,10 +12,10 @@ class SettingsViewModel : ViewModel() {
     }
 
     private val _isDarkTheme = MutableLiveData(false)
-    val isDarkTheme: LiveData<Boolean> get() = _isDarkTheme
+    val isDarkTheme: LiveData<Boolean> = _isDarkTheme
 
     init {
-        Log.d(TAG, "init: SettingsViewModel создан")
+        Log.d(TAG, "init: SettingsViewModel created")
     }
 
     fun setDarkTheme(enabled: Boolean) {
@@ -24,7 +24,7 @@ class SettingsViewModel : ViewModel() {
     }
 
     override fun onCleared() {
-        Log.d(TAG, "onCleared: SettingsViewModel уничтожен")
+        Log.d(TAG, "onCleared: SettingsViewModel destroyed")
         super.onCleared()
     }
 }

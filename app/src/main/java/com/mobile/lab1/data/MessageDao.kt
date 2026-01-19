@@ -12,8 +12,11 @@ interface MessageDao {
     suspend fun getAllMessages(): List<MessageEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMessages(messages: List<MessageEntity>)
+    suspend fun insertMessages(list: List<MessageEntity>)
 
     @Query("DELETE FROM messages")
     suspend fun clearMessages()
+
+    @Query("UPDATE messages SET isLiked = :isLiked WHERE id = :id")
+    suspend fun updateLike(id: Int, isLiked: Boolean)
 }

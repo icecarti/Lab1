@@ -6,7 +6,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mobile.lab1.data.Message
 import com.mobile.lab1.databinding.ItemMessageBinding
 
-class MessageAdapter : RecyclerView.Adapter<MessageAdapter.MessageViewHolder>() {
+class MessageAdapter(
+    private val onLikeClick: (Message) -> Unit
+) : RecyclerView.Adapter<MessageAdapter.MessageViewHolder>() {
 
     private var items: List<Message> = emptyList()
 
@@ -15,13 +17,24 @@ class MessageAdapter : RecyclerView.Adapter<MessageAdapter.MessageViewHolder>() 
         notifyDataSetChanged()
     }
 
-    class MessageViewHolder(
+    inner class MessageViewHolder(
         private val binding: ItemMessageBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Message) {
-            binding.tvTitle.text = item.title
+            binding.tvAuthor.text = item.authorName
             binding.tvBody.text = item.body
+
+            val iconRes = if (item.isLiked) {
+                R.drawable.ic_favorite_24
+            } else {
+                R.drawable.ic_favorite_border_24
+            }
+            binding.ivLike.setImageResource(iconRes)
+
+            binding.ivLike.setOnClickListener {
+                onLikeClick(item)
+            }
         }
     }
 
@@ -31,9 +44,9 @@ class MessageAdapter : RecyclerView.Adapter<MessageAdapter.MessageViewHolder>() 
         return MessageViewHolder(binding)
     }
 
-    override fun getItemCount(): Int = items.size
-
     override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
         holder.bind(items[position])
     }
+
+    override fun getItemCount(): Int = items.size
 }
